@@ -13,7 +13,7 @@ ENV PYTHONIOENCODING UTF-8
 ENV CONDA_DIR /opt/conda
 
 # Python binary and source dependencies
-RUN yum install -y curl wget java bzip2 gnupg2 git sqlite3 \
+RUN yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 \
     && yum install -y epel-release \
     && yum install -y jq \
     && yum clean all -y \
@@ -22,7 +22,7 @@ RUN yum install -y curl wget java bzip2 gnupg2 git sqlite3 \
     && echo 42dac45eee5e58f05f37399adda45e85 Miniconda2-4.0.5-Linux-x86_64.sh | md5sum -c - \
     && bash Miniconda2-4.0.5-Linux-x86_64.sh -b -p $CONDA_DIR \
     && rm Miniconda2-4.0.5-Linux-x86_64.sh \
-    && yum install -y gcc gcc-c++ glibc-devel && conda /opt/conda/bin/create --quiet --yes -p $CONDA_DIR/envs/python2 ipywidgets pandas numexpr matplotlib scipy seaborn scikit-learn notebook jupyter && source activate /opt/conda/envs/python2 && pip install widgetsnbextension && yum erase -y gcc gcc-c++ glibc-devel && yum clean all -y && rm -rf /root/.npm && \
+    && yum install -y gcc gcc-c++ glibc-devel && /opt/conda/bin/conda create --quiet --yes -p $CONDA_DIR/envs/python2 ipywidgets pandas numexpr matplotlib scipy seaborn scikit-learn notebook jupyter && source /opt/conda/bin/activate /opt/conda/envs/python2 && pip install widgetsnbextension && yum erase -y gcc gcc-c++ glibc-devel && yum clean all -y && rm -rf /root/.npm && \
     rm -rf /root/.cache && \
     rm -rf /root/.config && \
     rm -rf /root/.local && \
@@ -66,8 +66,8 @@ ENTRYPOINT ["/tini", "--"]
 EXPOSE 8888
 
 ADD start.sh /start.sh
-ADD wikieod.parquet /wikieod.parquet
 ADD var.ipynb /notebooks/var.ipynb
+# ADD wikieod.parquet /wikieod.parquet
 
 # RUN jq --arg v "$CONDA_DIR/envs/python2/bin/python" \
 #        '.["env"]["PYSPARK_PYTHON"]=$v' \
