@@ -22,11 +22,14 @@ RUN yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 \
     && echo 42dac45eee5e58f05f37399adda45e85 Miniconda2-4.0.5-Linux-x86_64.sh | md5sum -c - \
     && bash Miniconda2-4.0.5-Linux-x86_64.sh -b -p $CONDA_DIR \
     && rm Miniconda2-4.0.5-Linux-x86_64.sh \
-    && yum install -y gcc gcc-c++ glibc-devel && /opt/conda/bin/conda create --quiet --yes -p $CONDA_DIR/envs/python2 ipywidgets pandas numexpr matplotlib scipy seaborn scikit-learn notebook jupyter && source /opt/conda/bin/activate /opt/conda/envs/python2 && pip install widgetsnbextension && yum erase -y gcc gcc-c++ glibc-devel && yum clean all -y && rm -rf /root/.npm && \
+    && export PATH=/opt/conda/bin:$PATH \
+    && yum install -y gcc gcc-c++ glibc-devel && /opt/conda/bin/conda create --quiet --yes -p $CONDA_DIR/envs/python2 ipywidgets matplotlib notebook jupyter && source /opt/conda/bin/activate /opt/conda/envs/python2 && pip install widgetsnbextension && yum erase -y gcc gcc-c++ glibc-devel && yum clean all -y && rm -rf /root/.npm && \
     rm -rf /root/.cache && \
     rm -rf /root/.config && \
     rm -rf /root/.local && \
-    rm -rf /root/tmp && conda clean -tipsy
+    rm -rf /root/tmp && \
+    conda remove --quiet --yes --force qt pyqt && \
+    conda clean -tipsy
 
 ENV PATH /opt/conda/bin:$PATH
 
