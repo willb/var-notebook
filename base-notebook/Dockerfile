@@ -41,8 +41,10 @@ RUN yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 nss_wrapper \
     && useradd -m -s /bin/bash -N -u $NB_UID $NB_USER \
     && usermod -g root $NB_USER \
     && chown -R $NB_USER $CONDA_DIR \
+    && rm -f /opt/conda/envs/python2/lib/python2.7/site-packages/matplotlib/backends/back*qt* \
     && conda remove --quiet --yes --force qt pyqt \
-    && conda remove --quiet --yes --force --feature mkl ; conda remove mkl ; conda clean -tipsy
+    && conda remove --quiet --yes --force --feature mkl ; conda clean -tipsy
+
 
 ENV PATH /opt/conda/bin:$PATH
 
@@ -60,10 +62,7 @@ ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M -
 
 # Add a notebook profile.
 
-VOLUME /notebooks
-WORKDIR /notebooks
-
-RUN chown -R $NB_USER /notebooks
+RUN mkdir /notebooks && chown $NB_UID:root /notebooks && chmod 1777 /notebooks
 
 RUN chgrp -R root /home/$NB_USER \	
     && find /home/$NB_USER -type d -exec chmod g+rwx,o+rx {} \; \
@@ -92,7 +91,8 @@ USER $NB_UID
 
 RUN mkdir -p -m 700 /home/$NB_USER/.jupyter/ && \
     echo "c.NotebookApp.ip = '*'" >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py && \
-    echo "c.NotebookApp.open_browser = False" >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py
+    echo "c.NotebookApp.open_browser = False" >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py && \
+    echo "c.NotebookApp.notebook_dir = '/notebooks'" >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py
 
 LABEL io.k8s.description="PySpark Jupyter Notebook." \
       io.k8s.display-name="PySpark Jupyter Notebook." \
