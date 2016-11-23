@@ -6,11 +6,14 @@ ENV NB_UID=1011
 EXPOSE 8888
 
 ADD var.ipynb /notebooks/var.ipynb
-ADD wikieod.parquet /wikieod.parquet
+ADD wikieod.parquet /home/$NB_USER/wikieod.parquet
 
+USER root
+
+RUN chown $NB_UID:root /notebooks/var.ipynb
+
+USER $NB_USER
 ENV HOME /home/$NB_USER
-
-USER $NB_UID
 
 LABEL io.k8s.description="PySpark Jupyter Notebook with VaR calculation." \
       io.k8s.display-name="PySpark Jupyter Notebook with VaR calculation." \
