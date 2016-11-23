@@ -29,7 +29,7 @@ RUN yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 \
     rm -rf /root/.local && \
     rm -rf /root/tmp && \
     conda remove --quiet --yes --force qt pyqt && \
-    conda clean -tipsy
+    conda remove --quiet --yes --force --feature mkl ; conda remove mkl ; conda clean -tipsy
 
 ENV PATH /opt/conda/bin:$PATH
 
@@ -69,7 +69,7 @@ ENTRYPOINT ["/tini", "--"]
 EXPOSE 8888
 
 ADD start.sh /start.sh
-ADD var.ipynb /notebooks/var.ipynb
+# ADD var.ipynb /notebooks/var.ipynb
 # ADD wikieod.parquet /wikieod.parquet
 
 # RUN jq --arg v "$CONDA_DIR/envs/python2/bin/python" \
