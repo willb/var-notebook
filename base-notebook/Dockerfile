@@ -17,9 +17,9 @@ ENV NB_USER=nbuser
 ENV NB_UID=1011
 
 # Python binary and source dependencies
-RUN yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 nss_wrapper \
+RUN yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 \
     && yum install -y epel-release \
-    && yum install -y jq \
+    && yum install -y jq nss_wrapper \
     && yum clean all -y \
     && cd /tmp \
     && wget -q https://repo.continuum.io/miniconda/Miniconda2-4.0.5-Linux-x86_64.sh \

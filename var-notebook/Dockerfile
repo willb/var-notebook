@@ -10,7 +10,7 @@ ADD wikieod.parquet /home/$NB_USER/wikieod.parquet
 
 USER root
 
-RUN chown $NB_USER:root /notebooks/var.ipynb
+RUN chown $NB_UID:root /notebooks /notebooks/var.ipynb
 
 USER $NB_UID
 ENV HOME /home/$NB_USER

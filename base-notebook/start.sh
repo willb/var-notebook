@@ -20,7 +20,7 @@ if [ -f /usr/lib64/libnss_wrapper.so ]; then
 fi
 
 if [ "${NSS_WRAPPER_LIBRARY}" != "" ]; then
-    if [ x"${NSS_USER_ID}" != x"0" -a x"${NSS_USER_ID}" != x"1000" ]; then
+    if [ x"${NSS_USER_ID}" != x"0" -a x"${NSS_USER_ID}" != x"1011" ]; then
         if [ ! -f ${NSS_WRAPPER_PASSWD} ]; then
             cat /etc/passwd | sed -e 's/^nbuser:/builder:/' > ${NSS_WRAPPER_PASSWD}
 
