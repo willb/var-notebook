@@ -64,11 +64,6 @@ ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M -
 
 RUN mkdir /notebooks && chown $NB_UID:root /notebooks && chmod 1777 /notebooks
 
-RUN chgrp -R root /home/$NB_USER \	
-    && find /home/$NB_USER -type d -exec chmod g+rwx,o+rx {} \; \
-    && find /home/$NB_USER -type f -exec chmod g+rw {} \;
-
-
 # tini setup
 
 ENV TINI_VERSION v0.9.0
@@ -82,21 +77,24 @@ ENTRYPOINT ["/tini", "--"]
 EXPOSE 8888
 
 ADD start.sh /start.sh
-# ADD var.ipynb /notebooks/var.ipynb
-# ADD wikieod.parquet /wikieod.parquet
-
-ENV HOME /home/$NB_USER
-
-USER $NB_UID
 
 RUN mkdir -p -m 700 /home/$NB_USER/.jupyter/ && \
     echo "c.NotebookApp.ip = '*'" >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py && \
     echo "c.NotebookApp.open_browser = False" >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py && \
-    echo "c.NotebookApp.notebook_dir = '/notebooks'" >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py
+    echo "c.NotebookApp.notebook_dir = '/notebooks'" >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py && \
+    chown -R $NB_USER:root /home/$NB_USER && \
+    find /home/$NB_USER -type d -exec chmod g+rwx,o+rx {} \; && \
+    find /home/$NB_USER -type f -exec chmod g+rw {} \;
+
+
+
 
 LABEL io.k8s.description="PySpark Jupyter Notebook." \
       io.k8s.display-name="PySpark Jupyter Notebook." \
       io.openshift.expose-services="8888:http"
+
+ENV HOME /home/$NB_USER
+USER $NB_UID
 
 
 CMD ["/start.sh"]

@@ -10,9 +10,9 @@ ADD wikieod.parquet /home/$NB_USER/wikieod.parquet
 
 USER root
 
-RUN chown $NB_UID:root /notebooks/var.ipynb
+RUN chown $NB_USER:root /notebooks/var.ipynb
 
-USER $NB_USER
+USER $NB_UID
 ENV HOME /home/$NB_USER
 
 LABEL io.k8s.description="PySpark Jupyter Notebook with VaR calculation." \
