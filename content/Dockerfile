@@ -9,7 +9,14 @@ RUN yum install -y epel-release \
     && yum install -y lighttpd \
     && yum clean all -y \
     && sed -i -e 's/server.port = 80/server.port = 1080/g' /etc/lighttpd/lighttpd.conf \
+    && sed -i -e 's/disable/enable/g' /etc/lighttpd/conf.d/dirlisting.conf \
     && chmod -R 1777 /var/www/lighttpd
+
+WORKDIR /var/www/lighttpd
+
+ADD wikieod.parquet /var/www/lighttpd/wikieod.parquet
+
+RUN chmod -R 1777 /var/www/lighttpd
 
 # tini setup
 
