@@ -1,7 +1,5 @@
 #!/bin/bash
 
-. activate /opt/conda/envs/python2
-
 set -x
 
 set -eo pipefail

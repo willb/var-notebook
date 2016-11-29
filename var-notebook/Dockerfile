@@ -1,16 +1,21 @@
-FROM willb/var-notebook:base
+FROM willb/var-notebook:base35
 
 ENV NB_USER=nbuser
 ENV NB_UID=1011
 
 EXPOSE 8888
 
+USER $NB_UID
+
 ADD var.ipynb /notebooks/var.ipynb
 ADD wikieod.parquet /home/$NB_USER/wikieod.parquet
 
 USER root
 
-RUN chown $NB_UID:root /notebooks /notebooks/var.ipynb
+RUN chown -R $NB_USER:root /home/$NB_USER \
+    && find /home/$NB_USER -type d -exec chmod g+rwx,o+rx {} \; \
+    && find /home/$NB_USER -type f -exec chmod g+rw {} \; \
+    && chmod -f g+rw /notebooks/var.ipynb  /home/$NB_USER/wikieod.parquet
 
 USER $NB_UID
 ENV HOME /home/$NB_USER

@@ -22,14 +22,21 @@ RUN yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 \
     && yum install -y jq nss_wrapper \
     && yum clean all -y \
     && cd /tmp \
-    && wget -q https://repo.continuum.io/miniconda/Miniconda2-4.0.5-Linux-x86_64.sh \
-    && echo 42dac45eee5e58f05f37399adda45e85 Miniconda2-4.0.5-Linux-x86_64.sh | md5sum -c - \
-    && bash Miniconda2-4.0.5-Linux-x86_64.sh -b -p $CONDA_DIR \
-    && rm Miniconda2-4.0.5-Linux-x86_64.sh \
+    && wget -q https://repo.continuum.io/miniconda/Miniconda3-4.2.12-Linux-x86_64.sh \
+    && echo d0c7c71cc5659e54ab51f2005a8d96f3 Miniconda3-4.2.12-Linux-x86_64.sh | md5sum -c - \
+    && bash Miniconda3-4.2.12-Linux-x86_64.sh -b -p $CONDA_DIR \
+    && rm Miniconda3-4.2.12-Linux-x86_64.sh \
     && export PATH=/opt/conda/bin:$PATH \
     && yum install -y gcc gcc-c++ glibc-devel \
-    && /opt/conda/bin/conda create --quiet --yes -p $CONDA_DIR/envs/python2 ipywidgets matplotlib notebook jupyter \
-    && source /opt/conda/bin/activate /opt/conda/envs/python2 \
+    && /opt/conda/bin/conda install --quiet --yes python=3.5 'nomkl' \
+			    'ipywidgets=5.2*' \
+			    'matplotlib=1.5*' \
+			    'scipy=0.17*' \
+			    'seaborn=0.7*' \
+			    'cloudpickle=0.1*' \
+			    'dill=0.2*' \
+			    notebook \
+			    jupyter \
     && pip install widgetsnbextension \
     && yum erase -y gcc gcc-c++ glibc-devel \
     && yum clean all -y \
@@ -41,7 +48,6 @@ RUN yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 \
     && useradd -m -s /bin/bash -N -u $NB_UID $NB_USER \
     && usermod -g root $NB_USER \
     && chown -R $NB_USER $CONDA_DIR \
-    && rm -f /opt/conda/envs/python2/lib/python2.7/site-packages/matplotlib/backends/back*qt* \
     && conda remove --quiet --yes --force qt pyqt \
     && conda remove --quiet --yes --force --feature mkl ; conda clean -tipsy
 
@@ -82,12 +88,7 @@ RUN mkdir -p -m 700 /home/$NB_USER/.jupyter/ && \
     echo "c.NotebookApp.ip = '*'" >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py && \
     echo "c.NotebookApp.open_browser = False" >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py && \
     echo "c.NotebookApp.notebook_dir = '/notebooks'" >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py && \
-    chown -R $NB_USER:root /home/$NB_USER && \
-    find /home/$NB_USER -type d -exec chmod g+rwx,o+rx {} \; && \
-    find /home/$NB_USER -type f -exec chmod g+rw {} \;
-
-
-
+    chown -R $NB_UID:root /home/$NB_USER && \
 
 LABEL io.k8s.description="PySpark Jupyter Notebook." \
       io.k8s.display-name="PySpark Jupyter Notebook." \
