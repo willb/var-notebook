@@ -1,5 +1,8 @@
 FROM willb/var-notebook:base35
 
+USER root
+RUN mkdir /data
+
 ENV NB_USER=nbuser
 ENV NB_UID=1011
 
@@ -8,14 +11,16 @@ EXPOSE 8888
 USER $NB_UID
 
 ADD var.ipynb /notebooks/var.ipynb
-ADD wikieod.parquet /home/$NB_USER/wikieod.parquet
+ADD wikieod.parquet /data/wikieod.parquet
 
 USER root
 
-RUN chown -R $NB_USER:root /home/$NB_USER \
+RUN chown -R $NB_USER:root /home/$NB_USER /data \
     && find /home/$NB_USER -type d -exec chmod g+rwx,o+rx {} \; \
     && find /home/$NB_USER -type f -exec chmod g+rw {} \; \
-    && chmod -f g+rw /notebooks/var.ipynb  /home/$NB_USER/wikieod.parquet
+    && find /data -type d -exec chmod g+rwx,o+rx {} \; \
+    && find /data -type f -exec chmod g+rw {} \; \
+    && chmod -f g+rw /notebooks/var.ipynb
 
 USER $NB_UID
 ENV HOME /home/$NB_USER
