@@ -34,6 +34,8 @@ RUN yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 \
 			    'scipy=0.17*' \
 			    'seaborn=0.7*' \
 			    'cloudpickle=0.1*' \
+			    statsmodels \
+			    pandas \
 			    'dill=0.2*' \
 			    notebook \
 			    jupyter \
